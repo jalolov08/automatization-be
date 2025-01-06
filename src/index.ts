@@ -36,6 +36,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Сервер работает :)");
 });
 
+app.use("/api/uploads", express.static("uploads"));
 app.use("/api", router);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

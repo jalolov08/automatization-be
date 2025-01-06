@@ -68,12 +68,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  if (!userId) {
-    res.status(400).json({ error: "Пользователь не найден" });
-    return;
-  }
-
+  const userId = req.user._id;
   try {
     const result = await AuthService.logout(userId);
 

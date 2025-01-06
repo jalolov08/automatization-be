@@ -32,3 +32,8 @@ Thumbs.db
 
 # TypeScript build output
 *.tsbuildinfo
+
+
+# Files 
+
+uploads/

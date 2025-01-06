@@ -4,7 +4,7 @@ import TokenService, { TokenPayload } from "services/token.service";
 declare global {
   namespace Express {
     interface Request {
-      user?: TokenPayload;
+      user: TokenPayload;
     }
   }
 }
