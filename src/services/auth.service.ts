@@ -2,13 +2,18 @@ import User from "models/user.model";
 import bcrypt from "bcrypt";
 import { UserRole } from "types/user.type";
 import TokenService from "./token.service";
+import {
+  NotFoundError,
+  ForbiddenError,
+  InternalServerError,
+} from "utils/errors";
 
 class AuthService {
   async register(email: string, password: string, name: string) {
     try {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        throw new Error("Пользователь с таким email уже существует");
+        throw new ForbiddenError("Пользователь с таким email уже существует");
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,7 +40,7 @@ class AuthService {
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       console.error("Ошибка при регистрации пользователя:", error.message);
-      throw new Error(error.message);
+      throw new InternalServerError("Ошибка при регистрации пользователя");
     }
   }
 
@@ -43,12 +48,12 @@ class AuthService {
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        throw new Error("Пользователь с таким email не найден");
+        throw new NotFoundError("Пользователь с таким email не найден");
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        throw new Error("Неверный пароль");
+        throw new ForbiddenError("Неверный пароль");
       }
 
       const accessToken = TokenService.generateAccessToken(
@@ -65,7 +70,7 @@ class AuthService {
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       console.error("Ошибка при входе в систему:", error);
-      throw new Error(error.message);
+      throw new InternalServerError("Ошибка при входе в систему");
     }
   }
 
@@ -75,7 +80,7 @@ class AuthService {
       const user = await User.findById(decoded._id);
 
       if (!user) {
-        throw new Error("Пользователь не найден");
+        throw new NotFoundError("Пользователь не найден");
       }
 
       const accessToken = TokenService.generateAccessToken(
@@ -92,17 +97,20 @@ class AuthService {
       return { accessToken, refreshToken: newRefreshToken };
     } catch (error: any) {
       console.error("Ошибка при обновлении access токена:", error);
-      throw new Error(error.message);
+      throw new InternalServerError("Ошибка при обновлении токенов");
     }
   }
 
   async logout(userId: string) {
     try {
       const result = await TokenService.deleteRefreshToken(userId);
+      if (!result) {
+        throw new InternalServerError("Ошибка при выходе");
+      }
       return result;
     } catch (error: any) {
       console.error("Ошибка при выходе:", error);
-      throw new Error(error.message);
+      throw new InternalServerError("Ошибка при выходе");
     }
   }
 }

@@ -1,18 +1,22 @@
 import User from "models/user.model";
 import { IUser } from "types/user.type";
+import { NotFoundError, InternalServerError } from "utils/errors"; // Import custom errors
 
 class UserService {
   async getUserById(userId: string) {
     try {
       const user = await User.findById(userId);
       if (!user) {
-        throw new Error("Пользователь не найден.");
+        throw new NotFoundError("Пользователь не найден.");
       }
       return user;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new InternalServerError(
+        error.message || "Не удалось получить пользователя."
+      );
     }
   }
+
   async updateUserById(userId: string, updateData: Partial<IUser>) {
     try {
       const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
@@ -20,12 +24,14 @@ class UserService {
       });
 
       if (!updatedUser) {
-        throw new Error("Пользователь не найден.");
+        throw new NotFoundError("Пользователь не найден.");
       }
 
       return updatedUser;
     } catch (error: any) {
-      throw new Error(error.message);
+      throw new InternalServerError(
+        error.message || "Не удалось обновить пользователя."
+      );
     }
   }
 }
