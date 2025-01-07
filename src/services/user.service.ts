@@ -1,6 +1,6 @@
 import User from "models/user.model";
 import { IUser } from "types/user.type";
-import { NotFoundError, InternalServerError } from "utils/errors"; // Import custom errors
+import { NotFoundError, InternalServerError } from "utils/errors";
 
 class UserService {
   async getUserById(userId: string) {

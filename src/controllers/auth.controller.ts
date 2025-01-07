@@ -55,7 +55,7 @@ export const login = async (req: Request, res: Response) => {
     if (error instanceof NotFoundError || error instanceof ForbiddenError) {
       res.status(error.statusCode).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Ошибка при входе в систему" });
+      res.status(500).json({ error: error.message });
     }
   }
 };

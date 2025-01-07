@@ -67,7 +67,7 @@ export const changePassword = async (req: Request, res: Response) => {
   });
   if (error) {
     res.status(400).json({ error: error.details[0].message });
-    error;
+    return;
   }
 
   try {

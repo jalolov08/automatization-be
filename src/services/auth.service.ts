@@ -70,7 +70,7 @@ class AuthService {
       return { accessToken, refreshToken, user };
     } catch (error: any) {
       console.error("Ошибка при входе в систему:", error);
-      throw new InternalServerError("Ошибка при входе в систему");
+      throw new InternalServerError(error.message);
     }
   }
 
