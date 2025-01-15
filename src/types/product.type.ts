@@ -8,4 +8,5 @@ export interface IProduct extends Document {
   weight?: number;
   description?: string;
   date: string;
+  residue: number;
 }

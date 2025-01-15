@@ -29,6 +29,8 @@ class ProductService {
         categoryName: category.name,
         weight: data.weight,
         description: data.description,
+        residue: data.residue || 0, // Default residue to 0 if not provided
+        date: new Date().toISOString(),
       });
 
       await newProduct.save();
@@ -40,6 +42,7 @@ class ProductService {
       );
     }
   }
+
   async updateProduct(
     productId: string,
     data: Partial<IProduct>,
@@ -77,6 +80,8 @@ class ProductService {
       product.name = data.name || product.name;
       product.description = data.description || product.description;
       product.weight = data.weight || product.weight;
+      product.residue =
+        typeof data.residue === "number" ? data.residue : product.residue; // Update residue if provided
 
       await product.save();
 
@@ -108,12 +113,14 @@ class ProductService {
 
     if (startDate) {
       filter.date = {
+        ...filter.date,
         $gte: startDate,
       };
     }
 
     if (endDate) {
       filter.date = {
+        ...filter.date,
         $lte: endDate,
       };
     }

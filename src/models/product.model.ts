@@ -30,6 +30,11 @@ const ProductSchema = new Schema<IProduct>(
       type: String,
       required: false,
     },
+    residue: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     date: {
       type: String,
       required: true,
