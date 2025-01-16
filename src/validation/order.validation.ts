@@ -55,35 +55,6 @@ export const createOrderSchema = Joi.object({
       "array.min": "Необходимо указать хотя бы один продукт",
       "any.required": "Список продуктов обязателен",
     }),
-  totalCost: Joi.number().greater(0).required().messages({
-    "number.base": "Общая стоимость должна быть числом",
-    "number.greater": "Общая стоимость должна быть больше 0",
-    "any.required": "Общая стоимость обязательна",
-  }),
-  profit: Joi.number().required().messages({
-    "number.base": "Прибыль должна быть числом",
-    "any.required": "Прибыль обязательна",
-  }),
-  deliveryConditions: Joi.string()
-    .valid("pickup", "courier")
-    .required()
-    .messages({
-      "string.base": "Условие доставки должно быть строкой",
-      "any.only": "Условие доставки может быть только 'pickup' или 'courier'",
-      "any.required": "Условие доставки обязательно",
-    }),
-  date: Joi.string()
-    .optional()
-    .messages({
-      "string.base": "Дата должна быть строкой",
-    }),
-  status: Joi.string()
-    .valid("processing", "completed", "canceled")
-    .optional()
-    .messages({
-      "string.base": "Статус заказа должен быть строкой",
-      "any.only": "Статус заказа может быть только 'processing', 'completed' или 'canceled'",
-    }),
 });
 
 export const updateOrderSchema = Joi.object({

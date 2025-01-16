@@ -23,14 +23,12 @@ export async function createClient(req: Request, res: Response): Promise<void> {
 
 export async function updateClient(req: Request, res: Response): Promise<void> {
     const { clientId } = req.params;
-    const { fullName, contactInfo, status, debt, totalPurchases } = req.body;
+    const { fullName, contactInfo, status } = req.body;
 
     const { error } = updateClientSchema.validate({
         fullName,
         contactInfo,
         status,
-        debt,
-        totalPurchases,
     });
     if (error) {
         res.status(400).json({ error: error.details[0].message });
@@ -42,8 +40,8 @@ export async function updateClient(req: Request, res: Response): Promise<void> {
             fullName,
             contactInfo,
             status,
-            debt,
-            totalPurchases,
+            // debt,
+            // totalPurchases,
         });
         res.status(200).json(updatedClient); // Send the response
     } catch (error: any) {
@@ -107,24 +105,24 @@ export async function deleteClient(req: Request, res: Response) {
     }
 }
 
-export async function getClientDebtDetails(req: Request, res: Response) {
-    const { clientId } = req.params;
+// export async function getClientDebtDetails(req: Request, res: Response) {
+//     const { clientId } = req.params;
 
-    try {
-        const clientId: string = req.params.clientId;
-        const clientObjectId = new Types.ObjectId(clientId);
-        const debtDetails = await ClientService.getClientDebtDetails(clientObjectId);
+//     try {
+//         const clientId: string = req.params.clientId;
+//         const clientObjectId = new Types.ObjectId(clientId);
+//         const debtDetails = await ClientService.getClientDebtDetails(clientObjectId);
 
-        if (!debtDetails) {
-            throw new NotFoundError("Долг клиента не найден");
-        }
+//         if (!debtDetails) {
+//             throw new NotFoundError("Долг клиента не найден");
+//         }
 
-        res.status(200).json(debtDetails);
-    } catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404).json({ error: error.message });
-            return;
-        }
-        res.status(500).json({ error: "Не удалось получить информацию о долге клиента." });
-    }
-}
+//         res.status(200).json(debtDetails);
+//     } catch (error) {
+//         if (error instanceof NotFoundError) {
+//             res.status(404).json({ error: error.message });
+//             return;
+//         }
+//         res.status(500).json({ error: "Не удалось получить информацию о долге клиента." });
+//     }
+// }

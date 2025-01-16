@@ -63,25 +63,25 @@ class ClientService {
     return true;
   }
 
-  async hasDebt(clientId: Types.ObjectId): Promise<boolean> {
-    const client = await ClientModel.findById(clientId);
+  // async hasDebt(clientId: Types.ObjectId): Promise<boolean> {
+  //   const client = await ClientModel.findById(clientId);
 
-    if (!client) {
-      throw new Error("Client not found");
-    }
+  //   if (!client) {
+  //     throw new Error("Client not found");
+  //   }
 
-    return client.debt.totalDebt > 0;
-  }
+  //   return client.debt.totalDebt > 0;
+  // }
 
-  async getClientDebtDetails(clientId: Types.ObjectId): Promise<IClient['debt'] | null> {
-    const client = await ClientModel.findById(clientId);
+  // async getClientDebtDetails(clientId: Types.ObjectId): Promise<IClient['debt'] | null> {
+  //   const client = await ClientModel.findById(clientId);
 
-    if (!client) {
-      throw new Error("Client not found");
-    }
+  //   if (!client) {
+  //     throw new Error("Client not found");
+  //   }
 
-    return client.debt;
-  }
+  //   return client.debt;
+  // }
 }
 
 export default new ClientService();

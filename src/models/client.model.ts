@@ -16,20 +16,11 @@ const ClientSchema = new Schema<IClient>({
     default: ClientStatus.ACTIVE,
   },
   debt: {
-    totalDebt: { type: Number, required: true, default: 0 },
-    transactions: [
-      {
-        purchaseId: { type: Schema.Types.ObjectId, required: true, ref: "Purchase" },
-        amount: { type: Number, required: true },
-        date: { type: String, required: true, default: () => dayjs().format("DD.MM.YYYY HH:mm"), },
-      },
-    ],
+    totalClientDebt: { type: Number, required: true, default: 0 },
+    totalCompanyDebt: { type: Number, required: true, default: 0 },
   },
-  totalPurchases: {
-    totalCount: { type: Number, required: true, default: 0 },
-    wholesaleCount: { type: Number, required: true, default: 0 },
-    retailCount: { type: Number, required: true, default: 0 },
-  },
+  totalPurchaseAmount: { type: Number, required: true, default: 0 },
+  totalsaleAmount: { type: Number, required: true, default: 0 },
 }, {
   timestamps: true,
 });

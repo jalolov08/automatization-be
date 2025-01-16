@@ -24,11 +24,6 @@ export const createProductSchema = Joi.object({
       "string.pattern.base": "Неверный формат categoryId, должен быть ObjectId",
       "any.required": "Категория обязательна",
     }),
-  residue: Joi.number().min(0).required().messages({
-    "number.base": "Остаток должен быть числом",
-    "number.min": "Остаток не может быть меньше 0",
-    "any.required": "Остаток обязателен",
-  }),
 });
 
 export const updateProductSchema = Joi.object({

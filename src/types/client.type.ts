@@ -9,21 +9,12 @@ export interface IClient extends Document {
   fullName?: string;
   contactInfo: {
     phone: string;
-    email?: string;
-    address?: string;
   };
   status: ClientStatus;
   debt: {
-    totalDebt: number;
-    transactions: {
-      purchaseId: Types.ObjectId;
-      amount: number;
-      date: string;
-    }[];
+    totalClientDebt: number;
+    totalCompanyDebt: number;
   };
-  totalPurchases: {
-    totalCount: number;
-    wholesaleCount: number;
-    retailCount: number;
-  };
+  totalPurchaseAmount: number;
+  totalsaleAmount: number;
 }

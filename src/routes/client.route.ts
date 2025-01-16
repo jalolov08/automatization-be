@@ -6,7 +6,7 @@ import {
   getClientById,
   getClients,
   deleteClient,
-  getClientDebtDetails
+  // getClientDebtDetails
 } from "controllers/client.controller";
 
 const clientRouter = Router();
@@ -16,6 +16,6 @@ clientRouter.put("/:clientId", authenticate, updateClient);
 clientRouter.get("/:clientId", authenticate, getClientById);
 clientRouter.get("/", authenticate, getClients);
 clientRouter.delete("/:clientId", authenticate, deleteClient);
-clientRouter.get("/:clientId/debt", authenticate, getClientDebtDetails);
+// clientRouter.get("/:clientId/debt", authenticate, getClientDebtDetails);
 
 export default clientRouter;

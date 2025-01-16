@@ -23,6 +23,7 @@ export enum OrderStatus {
 
 export interface IOrder extends Document {
   clientId: Types.ObjectId;
+  clientName: string;
   orderType: OrderType;
   type: Type;
   date: string;

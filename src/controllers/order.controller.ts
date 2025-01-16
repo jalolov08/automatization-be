@@ -9,10 +9,9 @@ import {
 import { Types } from "mongoose";
 
 export async function createOrder(req: Request, res: Response) {
-  const userId = req.user._id;
-  const orderData = req.body;
+  const { clientId, orderType, type, products } = req.body;
 
-  const { error } = createOrderSchema.validate(orderData);
+  const { error } = createOrderSchema.validate({ clientId, orderType, type, products });
   if (error) {
     res.status(400).json({ error: error.details[0].message });
     return;
@@ -20,8 +19,7 @@ export async function createOrder(req: Request, res: Response) {
 
   try {
     const newOrder = await OrderService.createOrder({
-      ...orderData,
-      clientId: userId,
+      clientId, orderType, type, products
     });
 
     res.status(201).json({
@@ -29,7 +27,7 @@ export async function createOrder(req: Request, res: Response) {
       order: newOrder,
     });
   } catch (error: any) {
-    // console.log("Ошибка при создании заказа:", error);
+    console.log("Ошибка при создании заказа:", error);
 
     if (error instanceof NotFoundError || error instanceof ForbiddenError) {
       res.status(error.statusCode).json({ error: error.message });
@@ -95,14 +93,14 @@ export async function getMyOrders(req: Request, res: Response) {
   const limitNumber = parseInt(limit as string, 10);
 
   try {
-    const userObjectId = new Types.ObjectId(userId); 
+    const userObjectId = new Types.ObjectId(userId);
 
     const { orders, totalCount } = await OrderService.getOrdersByClientId(
       userObjectId,
       pageNumber,
       limitNumber,
       sortBy as string,
-      sortOrder as string,
+      sortOrder as "asc" | "desc",
       search as string,
       startDate as string,
       endDate as string

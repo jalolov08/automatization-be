@@ -29,10 +29,12 @@ export const createClientSchema = Joi.object({
       .messages({
         "string.base": "Адрес должен быть строкой",
       }),
-  }).required().messages({
-    "object.base": "Контактная информация должна быть объектом",
-    "any.required": "Контактная информация обязательна",
-  }),
+  })
+    .required()
+    .messages({
+      "object.base": "Контактная информация должна быть объектом",
+      "any.required": "Контактная информация обязательна",
+    }),
   status: Joi.string()
     .valid("active", "inactive")
     .required()
@@ -41,85 +43,6 @@ export const createClientSchema = Joi.object({
       "any.only": "Статус может быть только 'active' или 'inactive'",
       "any.required": "Статус обязателен",
     }),
-  debt: Joi.object({
-    totalDebt: Joi.number()
-      .min(0)
-      .required()
-      .messages({
-        "number.base": "Общий долг должен быть числом",
-        "number.min": "Общий долг не может быть отрицательным",
-        "any.required": "Общий долг обязателен",
-      }),
-    transactions: Joi.array()
-      .items(
-        Joi.object({
-          purchaseId: Joi.string()
-            .pattern(/^[0-9a-fA-F]{24}$/, "ObjectId")
-            .required()
-            .messages({
-              "string.pattern.base": "Неверный формат purchaseId, должен быть ObjectId",
-              "any.required": "purchaseId обязателен",
-            }),
-          amount: Joi.number()
-            .greater(0)
-            .required()
-            .messages({
-              "number.base": "Сумма должна быть числом",
-              "number.greater": "Сумма должна быть больше 0",
-              "any.required": "Сумма обязательна",
-            }),
-          date: Joi.string()
-            .pattern(/^\d{4}-\d{2}-\d{2}$/, "Date Format")
-            .required()
-            .messages({
-              "string.pattern.base": "Неверный формат даты, должен быть 'YYYY-MM-DD'",
-              "any.required": "Дата обязательна",
-            }),
-        })
-      )
-      .min(1)
-      .required()
-      .messages({
-        "array.base": "Транзакции долга должны быть массивом",
-        "array.min": "Необходимо указать хотя бы одну транзакцию",
-        "any.required": "Транзакции обязательны",
-      }),
-  }).required().messages({
-    "object.base": "Информация о долге должна быть объектом",
-    "any.required": "Информация о долге обязательна",
-  }),
-  totalPurchases: Joi.object({
-    totalCount: Joi.number()
-      .integer()
-      .min(0)
-      .required()
-      .messages({
-        "number.base": "Общее количество покупок должно быть числом",
-        "number.min": "Общее количество покупок не может быть отрицательным",
-        "any.required": "Общее количество покупок обязательно",
-      }),
-    wholesaleCount: Joi.number()
-      .integer()
-      .min(0)
-      .required()
-      .messages({
-        "number.base": "Количество оптовых покупок должно быть числом",
-        "number.min": "Количество оптовых покупок не может быть отрицательным",
-        "any.required": "Количество оптовых покупок обязательно",
-      }),
-    retailCount: Joi.number()
-      .integer()
-      .min(0)
-      .required()
-      .messages({
-        "number.base": "Количество розничных покупок должно быть числом",
-        "number.min": "Количество розничных покупок не может быть отрицательным",
-        "any.required": "Количество розничных покупок обязательно",
-      }),
-  }).required().messages({
-    "object.base": "Информация о покупках должна быть объектом",
-    "any.required": "Информация о покупках обязательна",
-  }),
 });
 
 export const updateClientSchema = Joi.object({
@@ -149,7 +72,11 @@ export const updateClientSchema = Joi.object({
       .messages({
         "string.base": "Адрес должен быть строкой",
       }),
-  }).optional(),
+  })
+    .optional()
+    .messages({
+      "object.base": "Контактная информация должна быть объектом",
+    }),
   status: Joi.string()
     .valid("active", "inactive")
     .optional()
@@ -157,64 +84,4 @@ export const updateClientSchema = Joi.object({
       "string.base": "Статус должен быть строкой",
       "any.only": "Статус может быть только 'active' или 'inactive'",
     }),
-  debt: Joi.object({
-    totalDebt: Joi.number()
-      .min(0)
-      .optional()
-      .messages({
-        "number.base": "Общий долг должен быть числом",
-        "number.min": "Общий долг не может быть отрицательным",
-      }),
-    transactions: Joi.array()
-      .items(
-        Joi.object({
-          purchaseId: Joi.string()
-            .pattern(/^[0-9a-fA-F]{24}$/, "ObjectId")
-            .optional()
-            .messages({
-              "string.pattern.base": "Неверный формат purchaseId, должен быть ObjectId",
-            }),
-          amount: Joi.number()
-            .greater(0)
-            .optional()
-            .messages({
-              "number.base": "Сумма должна быть числом",
-              "number.greater": "Сумма должна быть больше 0",
-            }),
-          date: Joi.string()
-            .pattern(/^\d{4}-\d{2}-\d{2}$/, "Date Format") // Date format check
-            .optional()
-            .messages({
-              "string.pattern.base": "Неверный формат даты, должен быть 'YYYY-MM-DD'",
-            }),
-        })
-      )
-      .optional(),
-  }).optional(),
-  totalPurchases: Joi.object({
-    totalCount: Joi.number()
-      .integer()
-      .min(0)
-      .optional()
-      .messages({
-        "number.base": "Общее количество покупок должно быть числом",
-        "number.min": "Общее количество покупок не может быть отрицательным",
-      }),
-    wholesaleCount: Joi.number()
-      .integer()
-      .min(0)
-      .optional()
-      .messages({
-        "number.base": "Количество оптовых покупок должно быть числом",
-        "number.min": "Количество оптовых покупок не может быть отрицательным",
-      }),
-    retailCount: Joi.number()
-      .integer()
-      .min(0)
-      .optional()
-      .messages({
-        "number.base": "Количество розничных покупок должно быть числом",
-        "number.min": "Количество розничных покупок не может быть отрицательным",
-      }),
-  }).optional(),
 });
