@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 import { IOrder, OrderType, DeliveryConditions, OrderStatus } from "../types/order.type";
 import dayjs from "dayjs";
-import { string } from "joi";
 
 const ProductSchema = new Schema(
   {
@@ -21,6 +20,7 @@ const OrderSchema = new Schema<IOrder>(
       enum: Object.values(OrderType),
       required: true,
     },
+    owner: { type: Schema.Types.ObjectId, ref: "User", required: true },
     date: {
       type: String,
       required: true,

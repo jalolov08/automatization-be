@@ -24,13 +24,14 @@ export enum OrderStatus {
 export interface IOrder extends Document {
   clientId: Types.ObjectId;
   clientName: string;
+  owner: Types.ObjectId;
   orderType: OrderType;
   type: Type;
   date: string;
   products: {
     productId: Types.ObjectId;
     quantity: number;
-    price: number,
+    price: number;
   }[];
   totalCost: number;
   profit: number;

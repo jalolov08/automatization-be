@@ -7,11 +7,18 @@ import {
   updateOrderSchema,
 } from "../validation/order.validation";
 import { Types } from "mongoose";
+import Order from "models/order.model";
 
 export async function createOrder(req: Request, res: Response) {
+  const userId = req.user._id;
   const { clientId, orderType, type, products } = req.body;
 
-  const { error } = createOrderSchema.validate({ clientId, orderType, type, products });
+  const { error } = createOrderSchema.validate({
+    clientId,
+    orderType,
+    type,
+    products,
+  });
   if (error) {
     res.status(400).json({ error: error.details[0].message });
     return;
@@ -19,7 +26,11 @@ export async function createOrder(req: Request, res: Response) {
 
   try {
     const newOrder = await OrderService.createOrder({
-      clientId, orderType, type, products
+      owner: userId,
+      clientId,
+      orderType,
+      type,
+      products,
     });
 
     res.status(201).json({
@@ -78,6 +89,54 @@ export async function updateOrder(req: Request, res: Response) {
 
 export async function getMyOrders(req: Request, res: Response) {
   const userId = req.user._id;
+
+  const {
+    page = 1,
+    limit = 10,
+    sortBy = "date",
+    sortOrder = "desc",
+    search = "",
+    startDate,
+    endDate,
+  } = req.query;
+
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+
+  try {
+    const userObjectId = new Types.ObjectId(userId);
+
+    const { orders, totalCount } = await OrderService.getOrdersByOwner(
+      userObjectId,
+      pageNumber,
+      limitNumber,
+      sortBy as string,
+      sortOrder as "asc" | "desc",
+      search as string,
+      startDate as string,
+      endDate as string
+    );
+
+    res.status(200).json({
+      message: "Заказы успешно получены",
+      orders,
+      pagination: {
+        totalCount,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalCount / limitNumber),
+        pageSize: limitNumber,
+      },
+    });
+  } catch (error: any) {
+    console.log("Ошибка при получении заказов:", error);
+
+    res.status(500).json({
+      error: "Ошибка при получении заказов",
+    });
+  }
+}
+export async function getClientOrders(req: Request, res: Response) {
+  const userId = req.params.id;
 
   const {
     page = 1,

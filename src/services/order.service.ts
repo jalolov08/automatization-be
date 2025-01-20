@@ -27,7 +27,7 @@
 //         }
 //       }
 //     } else if (orderData.type === "sale") {
-//       if (orderData.products && Array.isArray(orderData.products)) {        
+//       if (orderData.products && Array.isArray(orderData.products)) {
 //         for (const product of orderData.products) {
 //           const { success, message } = await batchService.sellFromBatches(product.productId, product.quantity);
 //           if (!success) {
@@ -42,7 +42,6 @@
 //     const newOrder = new OrderModel(orderData);
 //     return await newOrder.save();
 //   }
-
 
 //   async updateOrder(orderId: string, updateData: Partial<IOrder>): Promise<IOrder> {
 //     const order = await OrderModel.findById(orderId);
@@ -94,12 +93,13 @@
 // export default new OrderService();
 import { Types } from "mongoose";
 import { IOrder } from "../types/order.type";
-import OrderModel from "../models/order.model";
 import batchService from "./batch.service";
 import ClientModel from "models/client.model";
+import Order from "models/order.model";
 
 class OrderService {
   async createOrder(orderData: {
+    owner: string;
     clientId: Types.ObjectId;
     orderType: "purchase" | "sale";
     type: string;
@@ -112,9 +112,9 @@ class OrderService {
     if (!orderData.products || !Array.isArray(orderData.products)) {
       throw new Error("Products must be an array.");
     }
-    const client = await ClientModel.findById(orderData.clientId)
+    const client = await ClientModel.findById(orderData.clientId);
     if (!client) {
-      throw new Error('Client 404')
+      throw new Error("Client 404");
     }
     let totalCost = 0;
     let totalProfit = 0;
@@ -143,7 +143,7 @@ class OrderService {
           throw new Error(`Failed to create order: ${message}`);
         }
         if (profit) {
-          totalProfit += profit
+          totalProfit += profit;
         }
 
         totalCost += product.price * product.quantity;
@@ -153,9 +153,14 @@ class OrderService {
     } else {
       throw new Error("Invalid order type. Must be 'purchase' or 'sale'.");
     }
-    await client.save()
+    await client.save();
 
-    const newOrder = new OrderModel({ ...orderData, totalCost, clientName: client.fullName, profit: totalProfit });
+    const newOrder = new Order({
+      ...orderData,
+      totalCost,
+      clientName: client.fullName,
+      profit: totalProfit,
+    });
     return await newOrder.save();
   }
 
@@ -163,7 +168,7 @@ class OrderService {
     orderId: string,
     updateData: Partial<IOrder>
   ): Promise<IOrder> {
-    const order = await OrderModel.findById(orderId);
+    const order = await Order.findById(orderId);
 
     if (!order) {
       throw new Error("Order not found.");
@@ -184,6 +189,40 @@ class OrderService {
     endDate?: string
   ): Promise<{ orders: IOrder[]; totalCount: number }> {
     const query: any = { clientId };
+    if (search) {
+      query["$text"] = { $search: search };
+    }
+
+    if (startDate && endDate) {
+      query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    }
+
+    const orders = await Order.find(query)
+      .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    console.log(orders);
+
+    const totalCount = await Order.countDocuments(query);
+
+    return { orders, totalCount };
+  }
+
+  async getOrderById(orderId: string): Promise<IOrder | null> {
+    return await Order.findById(orderId);
+  }
+
+  async getOrdersByOwner(
+    owner: Types.ObjectId,
+    page = 1,
+    limit = 10,
+    sortBy = "date",
+    sortOrder: "asc" | "desc" = "asc",
+    search = "",
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ orders: IOrder[]; totalCount: number }> {
+    const query: any = { owner };
 
     if (search) {
       query["$text"] = { $search: search };
@@ -193,18 +232,14 @@ class OrderService {
       query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
     }
 
-    const orders = await OrderModel.find(query)
+    const orders = await Order.find(query)
       .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 
-    const totalCount = await OrderModel.countDocuments(query);
+    const totalCount = await Order.countDocuments(query);
 
     return { orders, totalCount };
-  }
-
-  async getOrderById(orderId: string): Promise<IOrder | null> {
-    return await OrderModel.findById(orderId);
   }
 }
 
